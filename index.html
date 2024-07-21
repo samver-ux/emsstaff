@@ -1,0 +1,1234 @@
+<html><head><base href="https://میزان-کارکرد-کارکنان-اورژانس.ir/" />
+<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>میزان کارکرد کارکنان اورژانس</title>
+<style>
+    body {
+        font-family: 'Tahoma', sans-serif;
+        background-color: #f0f8ff;
+        direction: rtl;
+        padding: 20px;
+    }
+    h1, h2 {
+        color: #2c3e50;
+        text-align: center;
+    }
+    form, .results {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-top: 10px;
+    }
+    input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    #signature {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    button {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    button:hover {
+        background-color: #2980b9;
+    }
+    #clearSignBtn {
+        background-color: #e74c3c;
+        margin-right: 10px;
+    }
+    #clearSignBtn:hover {
+        background-color: #c0392b;
+    }
+    .table-container {
+
+    overflow-x: auto;
+
+    margin-bottom: 20px;
+
+}
+
+
+
+table {
+
+    width: 100%;
+
+    min-width: 600px; /* Adjust this value based on your table content */
+
+    border-collapse: collapse;
+
+    margin-top: 20px;
+
+}
+
+
+
+th, td {
+
+    border: 1px solid #ddd;
+
+    padding: 8px;
+
+    text-align: right;
+
+    white-space: nowrap; /* Prevent text wrapping in cells */
+
+}
+
+
+
+@media (max-width: 768px) {
+
+    body {
+
+        padding: 10px;
+
+    }
+
+
+
+    input, select, textarea {
+
+        font-size: 16px; /* Prevent zoom on focus in iOS */
+
+    }
+
+
+
+    .shift-info {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+
+    .download-buttons button {
+
+        margin: 5px 0;
+
+        width: 100%;
+
+    }
+
+    .date-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        background-color: #f1f1f1;
+        padding: 10px;
+        border-radius: 4px;
+        position: absolute;
+        z-index: 1000;
+    }
+    .date-grid span {
+        text-align: center;
+        padding: 5px;
+        background-color: #fff;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    .date-grid span:hover {
+        background-color: #e0e0e0;
+    }
+    .date-grid span.selected {
+        background-color: #3498db;
+        color: white;
+    }
+    .shift-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    .results h2 {
+        margin-top: 30px;
+    }
+    img.signature {
+        max-width: 100px;
+        max-height: 50px;
+    }
+    .edit-btn, .delete-btn {
+        padding: 5px 10px;
+        margin: 2px;
+        cursor: pointer;
+    }
+    .edit-btn {
+        background-color: #f39c12;
+    }
+    .delete-btn {
+        background-color: #e74c3c;
+    }
+    
+    
+    .download-buttons {
+
+    text-align: center;
+
+    margin-top: 20px;
+
+}
+
+
+
+.download-buttons button {
+
+    margin: 0 10px;
+
+    padding: 10px 20px;
+
+    font-size: 16px;
+
+    background-color: #3498db;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 4px;
+
+    cursor: pointer;
+
+}
+
+
+
+.download-buttons button:hover {
+
+    background-color: #2980b9;
+
+}
+
+
+</style>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+
+
+</head>
+<body>
+    <h1>میزان کارکرد کارکنان اورژانس</h1>
+    <form id="performanceForm" method="GET" action="https://میزان-کارکرد-کارکنان-اورژانس.ir/submit">
+        <h2>اطلاعات پایگاه</h2>
+        <label for="managerName">نام مسئول پایگاه:</label>
+        <input type="text" id="managerName" name="managerName" required>
+        
+        <label for="nationalCode">کد ملی:</label>
+        <input type="text" id="nationalCode" name="nationalCode" required>
+        
+        <label for="signature">امضا:</label>
+        <canvas id="signature" width="300" height="100"></canvas>
+        <button type="button" id="clearSignBtn">پاک کردن امضا</button>
+        
+        <label for="baseName">نام پایگاه:</label>
+        <select id="baseName" name="baseName" required>
+          <option value="فلسطین">فلسطین</option>
+
+    <option value="فرهنگ">فرهنگ</option>
+
+    <option value="اسماعیلی">اسماعیلی</option>
+
+    <option value="عاشقان">عاشقان</option>
+
+    <option value="آهی دشت">آهی دشت</option>
+
+    <option value="وفاییان">وفاییان</option>
+
+    <option value="پیامبر">پیامبر</option>
+
+    <option value="شجاع">شجاع</option>
+
+    <option value="تاکام">تاکام</option>
+
+    <option value="محمد آباد">محمد آباد</option>
+
+    <option value="کلاج خوسه">کلاج خوسه</option>
+
+    <option value="کیاسر">کیاسر</option>
+
+    <option value="تلمادره">تلمادره</option>
+
+    <option value="فرودگاه">فرودگاه</option>
+
+    <option value="امام زاده یحیی">امام زاده یحیی</option>
+
+</select>
+
+        
+        <label for="baseType">نوع پایگاه:</label>
+        <select id="baseType" name="baseType" required>
+            <option value="شهری">شهری</option>
+            <option value="جاده‌ای">جاده‌ای</option>
+        </select>
+        
+        <label for="date">ماه و سال:</label>
+        <input type="text" id="date" name="date" placeholder="مثال: تیر ۱۴۰۳" required>
+        
+        <h2>اطلاعات کارکنان</h2>
+ <label for="employeeName">نام پرسنل:</label>
+
+<input type="text" id="employeeName" name="employeeName" list="employeeList" required>
+
+<datalist id="employeeList">
+
+   <option value="محمدابراهیم نیا عمران">محمدابراهیم نیا عمران</option>
+  <option value="امیر حسین احمدی">امیر حسین احمدی</option>
+  <option value="محمود رضا احمدیان چاشمی">محمود رضا احمدیان چاشمی</option>
+  <option value="سعید اسدي اسپوکلائی">سعید اسدي اسپوکلائی</option>
+  <option value="مهدی اصغری لموکی">مهدی اصغری لموکی</option>
+  <option value="مصطفی انصاري خاريكي">مصطفی انصاري خاريكي</option>
+  <option value="سینا اولادی قادیکلایی">سینا اولادی قادیکلایی</option>
+  <option value="محمد ایمانی پرکوهی">محمد ایمانی پرکوهی</option>
+  <option value="علی آهی فر">علی آهی فر</option>
+  <option value="ابوالفضل ابراهیم زاده">ابوالفضل ابراهیم زاده</option>
+  <option value="حسن آرین">حسن آرین</option>
+  <option value="پیمان بهاری">پیمان بهاری</option>
+  <option value="علی بابانژاد سورکی">علی بابانژاد سورکی</option>
+  <option value="حسین بابائی شیب آبندانی">حسین بابائی شیب آبندانی</option>
+  <option value="حسین باقری جامخانه">حسین باقری جامخانه</option>
+  <option value="مهدی بخشنده">مهدی بخشنده</option>
+  <option value="علی اصغر باقریان">علی اصغر باقریان</option>
+  <option value="محمد بیرجندی">محمد بیرجندی</option>
+  <option value="اشکان بهرامی نژاد">اشکان بهرامی نژاد</option>
+  <option value="محمد بابا پور قادیکلایی">محمد بابا پور قادیکلایی</option>
+  <option value="حسین بغياري">حسین بغياري</option>
+  <option value="محراب پور قاسم">محراب پور قاسم</option>
+  <option value="علی پیرحیاتی">علی پیرحیاتی</option>
+  <option value="مرتضی تقی زاده کلیدبری">مرتضی تقی زاده کلیدبری</option>
+  <option value="مرتضی تودرواری">مرتضی تودرواری</option>
+  <option value="مهدی جان زاده">مهدی جان زاده</option>
+  <option value="مصطفی جعفری">مصطفی جعفری</option>
+  <option value="پژمان جمالی">پژمان جمالی</option>
+  <option value="سید یاسر حسینی ولشکلائی">سید یاسر حسینی ولشکلائی</option>
+  <option value="علی حمیدی">علی حمیدی</option>
+  <option value="مصطفي حيدري">مصطفي حيدري</option>
+  <option value="رضا خلیلی">رضا خلیلی</option>
+  <option value="علی خجسته راد">علی خجسته راد</option>
+  <option value="سید الیاس خدادادی">سید الیاس خدادادی</option>
+  <option value="حامد خوش خو">حامد خوش خو</option>
+  <option value="خسرو درزي اواتی">خسرو درزي اواتی</option>
+  <option value="سعید درواری">سعید درواری</option>
+  <option value="مسعود دهقان">مسعود دهقان</option>
+  <option value="رجبعلی دهقانی سراجی">رجبعلی دهقانی سراجی</option>
+  <option value="عباس ذاکری گالشی">عباس ذاکری گالشی</option>
+  <option value="آرمان ذبیح زاده">آرمان ذبیح زاده</option>
+  <option value="هانی رجبی">هانی رجبی</option>
+  <option value="رامین رستم پور">رامین رستم پور</option>
+  <option value="رضا رستمی ابوخیلی">رضا رستمی ابوخیلی</option>
+  <option value="سید علیرضا ركني حسيني">سید علیرضا ركني حسيني</option>
+  <option value="رحمت رضائی">رحمت رضائی</option>
+  <option value="ماهان رمضانی">ماهان رمضانی</option>
+  <option value="محمدرضا رمضانی">محمدرضا رمضانی</option>
+  <option value="علی روحی آغوزگله">علی روحی آغوزگله</option>
+  <option value="علی اکبر روحانی">علی اکبر روحانی</option>
+  <option value="عباد روشن قیاس">عباد روشن قیاس</option>
+  <option value="محسن زارع الندانی">محسن زارع الندانی</option>
+  <option value="محمد رضا زین العابدینی شورکائی">محمد رضا زین العابدینی شورکائی</option>
+  <option value="حامد زمانی فر">حامد زمانی فر</option>
+  <option value="سیدرشید ساداتی میانایی">سیدرشید ساداتی میانایی</option>
+  <option value="میثم سرخکلایی نژاد">میثم سرخکلایی نژاد</option>
+  <option value="احمد سلیمی">احمد سلیمی</option>
+  <option value="امیر حسین ستوده نیا">امیر حسین ستوده نیا</option>
+  <option value="سعید شبگرد">سعید شبگرد</option>
+  <option value="علي شاكري">علي شاكري</option>
+  <option value="حسین شعبانی">حسین شعبانی</option>
+  <option value="امیرحسین شیخی">امیرحسین شیخی</option>
+  <option value="صادق شیرزاد">صادق شیرزاد</option>
+  <option value="بابک شریفیان">بابک شریفیان</option>
+  <option value="مهدی صحراگرد">مهدی صحراگرد</option>
+  <option value="امین اله صادقی">امین اله صادقی</option>
+  <option value="محسن صالحی کیاسری">محسن صالحی کیاسری</option>
+  <option value="حسن طالبی قادیکلایی">حسن طالبی قادیکلایی</option>
+  <option value="توکل عربی">توکل عربی</option>
+  <option value="احسان علینژاد سورکی">احسان علینژاد سورکی</option>
+  <option value="رضا علینژاد">رضا علینژاد</option>
+  <option value="مهدی عرب میارکلایی">مهدی عرب میارکلایی</option>
+  <option value="محمد عموپور">محمد عموپور</option>
+  <option value="محمدرضا غلامی ورندی">محمدرضا غلامی ورندی</option>
+  <option value="محمد غفاری چراتی">محمد غفاری چراتی</option>
+  <option value="محمد فرزانه صاحبی">محمد فرزانه صاحبی</option>
+  <option value="علی فتحی لولاکی">علی فتحی لولاکی</option>
+  <option value="حسین فروزان">حسین فروزان</option>
+  <option value="محمد قدیرنیا">محمد قدیرنیا</option>
+  <option value="محمد امین قلی پور">محمد امین قلی پور</option>
+  <option value="محمد قلی نژاد">محمد قلی نژاد</option>
+  <option value="کیوان قدیری اوغانی">کیوان قدیری اوغانی</option>
+  <option value="حسین لازری">حسین لازری</option>
+  <option value="محسن لازری">محسن لازری</option>
+  <option value="سید علی کرمی">سید علی کرمی</option>
+  <option value="سید مهران كاظمي آهنگرکلایی">سید مهران كاظمي آهنگرکلایی</option>
+  <option value="طه کاکویی">طه کاکویی</option>
+  <option value="افشین کاکویی">افشین کاکویی</option>
+  <option value="صابر کاکویی">صابر کاکویی</option>
+  <option value="سامان کروبیان">سامان کروبیان</option>
+  <option value="محمد حسین کهنسال">محمد حسین کهنسال</option>
+  <option value="عبداله کارگر فرح آبادی">عبداله کارگر فرح آبادی</option>
+  <option value="محمد کجوری">محمد کجوری</option>
+  <option value="امیرحسین کلانتری">امیرحسین کلانتری</option>
+  <option value="محسن کریمی">محسن کریمی</option>
+  <option value="مهدی کمالی">مهدی کمالی</option>
+  <option value="شعیب کلبادی نژاد">شعیب کلبادی نژاد</option>
+  <option value="میثم گوران">میثم گوران</option>
+  <option value="حسن مسلمی">حسن مسلمی</option>
+  <option value="ناصر محبی">ناصر محبی</option>
+  <option value="محمد محسنی">محمد محسنی</option>
+  <option value="محمد محمدپورجوجاده">محمد محمدپورجوجاده</option>
+  <option value="سید حامد محمدی">سید حامد محمدی</option>
+  <option value="فرهاد موسوی">فرهاد موسوی</option>
+  <option value="سید رضا محمودی">سید رضا محمودی</option>
+  <option value="علی محمودی تیلمی">علی محمودی تیلمی</option>
+  <option value="سید محمد مهدی مرادی قادیکلایی">سید محمد مهدی مرادی قادیکلایی</option>
+  <option value="مهدی معافی">مهدی معافی</option>
+  <option value="ابراهیم مهدوی">ابراهیم مهدوی</option>
+  <option value="عبدالرضا نامی">عبدالرضا نامی</option>
+  <option value="ناصر نبوی">ناصر نبوی</option>
+  <option value="محمد نصرتی">محمد نصرتی</option>
+  <option value="امیر نصرالاهی منصور">امیر نصرالاهی منصور</option>
+  <option value="روح ا... نوروزیان کولایی">روح ا... نوروزیان کولایی</option>
+  <option value="احسان نورپور">احسان نورپور</option>
+  <option value="مهدی نوروزی کروایی">مهدی نوروزی کروایی</option>
+  <option value="سید جواد هاشمی">سید جواد هاشمی</option>
+  <option value="امیر منوچهر وطن پور">امیر منوچهر وطن پور</option>
+  <option value="احمد وفائی مقدم">احمد وفائی مقدم</option>
+  <option value="محمد یعقوبی">محمد یعقوبی</option>
+  <option value="علی اکبر یوسفی جدیدی">علی اکبر یوسفی جدیدی</option>
+  <option value="میلاد یونسی">میلاد یونسی</option>
+  <option value="بهنام یونسی">بهنام یونسی</option>
+  <option value="عباس یونسی جدید الاسلامی">عباس یونسی جدید ال
+
+</datalist>
+
+
+        
+        <label for="productive">بهره‌ور:</label>
+        <select id="productive" name="productive" required>
+            <option value="بله">بله</option>
+            <option value="خیر">خیر</option>
+        </select>
+
+        <h2>اطلاعات شیفت‌ها</h2>
+        <div class="shift-info">
+            <div>
+                <label for="normal24Count">۲۴ عادی - تعداد:</label>
+                <input type="number" id="normal24Count" name="normal24Count" min="0">
+            </div>
+            <div>
+                <label for="normal24Date">۲۴ عادی - تاریخ:</label>
+                <input type="text" id="normal24Date" name="normal24Date" class="date-input" readonly>
+            </div>
+        </div>
+
+        <div class="shift-info">
+            <div>
+                <label for="holiday24Count">۲۴ تعطیل - تعداد:</label>
+                <input type="number" id="holiday24Count" name="holiday24Count" min="0">
+            </div>
+            <div>
+                <label for="holiday24Date">۲۴ تعطیل - تاریخ:</label>
+                <input type="text" id="holiday24Date" name="holiday24Date" class="date-input" readonly>
+            </div>
+        </div>
+
+        <div class="shift-info">
+            <div>
+                <label for="normalLongCount">لانگ عادی - تعداد:</label>
+                <input type="number" id="normalLongCount" name="normalLongCount" min="0">
+            </div>
+            <div>
+                <label for="normalLongDate">لانگ عادی - تاریخ:</label>
+                <input type="text" id="normalLongDate" name="normalLongDate" class="date-input" readonly>
+            </div>
+        </div>
+
+        <div class="shift-info">
+            <div>
+                <label for="holidayLongCount">لانگ تعطیل - تعداد:</label>
+                <input type="number" id="holidayLongCount" name="holidayLongCount" min="0">
+            </div>
+            <div>
+                <label for="holidayLongDate">لانگ تعطیل - تاریخ:</label>
+                <input type="text" id="holidayLongDate" name="holidayLongDate" class="date-input" readonly>
+            </div>
+        </div>
+
+        <div class="shift-info">
+            <div>
+                <label for="nightCount">شب - تعداد:</label>
+                <input type="number" id="nightCount" name="nightCount" min="0">
+            </div>
+            <div>
+                <label for="nightDate">شب - تاریخ:</label>
+                <input type="text" id="nightDate" name="nightDate" class="date-input" readonly>
+            </div>
+        </div>
+
+        <div class="shift-info">
+            <div>
+                <label for="fullLeaveCount">مرخصی کامل - تعداد:</label>
+                <input type="number" id="fullLeaveCount" name="fullLeaveCount" min="0">
+            </div>
+            <div>
+                <label for="fullLeaveDate">مرخصی کامل - تاریخ:</label>
+                <input type="text" id="fullLeaveDate" name="fullLeaveDate" class="date-input" readonly>
+            </div>
+        </div>
+
+        <div class="shift-info">
+            <div>
+                <label for="sickLeaveCount">مرخصی استعلاجی - تعداد:</label>
+                <input type="number" id="sickLeaveCount" name="sickLeaveCount" min="0">
+            </div>
+            <div>
+                <label for="sickLeaveDate">مرخصی استعلاجی - تاریخ:</label>
+                <input type="text" id="sickLeaveDate" name="sickLeaveDate" class="date-input" readonly>
+            </div>
+        </div>
+
+        <div class="shift-info">
+            <div>
+                <label for="extraHoursCount">ساعات اضافی متفرقه - میزان به ساعت:</label>
+                <input type="number" id="extraHoursCount" name="extraHoursCount" min="0">
+            </div>
+            <div>
+                <label for="extraHoursDate">ساعات اضافی متفرقه - تاریخ:</label>
+                <input type="text" id="extraHoursDate" name="extraHoursDate" class="date-input" readonly>
+            </div>
+        </div>
+
+        <div class="shift-info">
+            <div>
+                <label for="hourlyLeaveCount">مرخصی ساعتی - میزان به ساعت:</label>
+                <input type="number" id="hourlyLeaveCount" name="hourlyLeaveCount" min="0">
+            </div>
+            <div>
+                <label for="hourlyLeaveDate">مرخصی ساعتی - تاریخ:</label>
+                <input type="text" id="hourlyLeaveDate" name="hourlyLeaveDate" class="date-input" readonly>
+            </div>
+        </div>
+
+        <label for="missionCount">تعداد ماموریت:</label>
+        <input type="number" id="missionCount" name="missionCount" min="0">
+
+        <label for="mealCount">تعداد وعده غذا:</label>
+        <input type="number" id="mealCount" name="mealCount" min="0">
+
+        <label for="notes">ملاحظات: (استقرار)</label>
+        <textarea id="notes" name="notes" rows="3"></textarea>
+        
+        <button type="submit" id="submitBtn">ثبت</button>
+        <button type="button" id="updateBtn" style="display:none;">به‌روزرسانی</button>
+    </form>
+    
+    <div class="results" style="display:none;">
+        <h2>جدول ۱: اطلاعات پایگاه</h2>
+        <div class="table-container">
+
+        <table id="table1">
+            <thead>
+                <tr>
+                    <th>نام مسئول پایگاه</th>
+                    <th>نام پایگاه</th>
+                    <th>نوع پایگاه</th>
+                    <th>کد ملی</th>
+                    <th>ماه و سال</th>
+                    <th>تصویر امضا</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        </div>
+
+        
+
+        <h2>جدول ۲: اطلاعات کارکنان و شیفت‌ها</h2>
+        <div class="table-container">
+
+        <table id="table2">
+            <thead>
+                <tr>
+                    <th>نام پرسنل</th>
+                    <th>بهره ور</th>
+                    <th>نوع پایگاه</th>
+                    <th>نام پایگاه</th>
+                    <th>ماه و سال</th>
+                    <th>۲۴ عادی</th>
+                    <th>۲۴ تعطیل</th>
+                    <th>لانگ عادی</th>
+                    <th>لانگ تعطیل</th>
+                    <th>شب</th>
+                    <th>مرخصی کامل</th>
+                    <th>مرخصی استعلاجی</th>
+                    <th>ساعات متفرقه</th>
+                    <th>مرخصی ساعتی</th>
+                    <th>تعداد ماموریت</th>
+                    <th>تعداد وعده غذا</th>
+                    <th>ملاحظات</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+</div>
+
+
+
+        <h2>جدول ۳: تاریخ‌های شیفت‌ها</h2>
+        <div class="table-container">
+
+        	
+        <table id="table3">
+            <thead>
+                <tr>
+                    <th>نام پرسنل</th>
+                    <th>نام پایگاه</th>
+                    <th>بهره ور</th>
+                    <th>تاریخ ۲۴ عادی</th>
+                    <th>تاریخ ۲۴ تعطیل</th>
+                    <th>تاریخ لانگ عادی</th>
+                    <th>تاریخ لانگ تعطیل</th>
+                    <th>تاریخ شب</th>
+                    <th>تاریخ مرخصی کامل</th>
+                    <th>تاریخ مرخصی استعلاجی</th>
+                    <th>تاریخ ساعات متفرقه</th>
+                    <th>تاریخ مرخصی ساعتی</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        </div>
+
+        
+        
+        <div class="download-buttons">
+
+    <button id="downloadImage">دانلود تصویر جداول</button>
+
+    <button id="downloadExcel">دانلود فایل اکسل جداول</button>
+
+<button id="shareButton">اشتراک‌گذاری فایل‌ها</button>
+
+
+
+
+</div>
+
+
+        
+    </div>
+
+    <script>
+    let baseInfo = {};
+    let employees = [];
+    const form = document.getElementById('performanceForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const updateBtn = document.getElementById('updateBtn');
+    const resultsDiv = document.querySelector('.results');
+    const canvas = document.getElementById('signature');
+    const ctx = canvas.getContext('2d');
+    const clearSignBtn = document.getElementById('clearSignBtn');
+
+    // Signature pad functionality
+    let isDrawing = false;
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    function startDrawing(e) {
+        isDrawing = true;
+        draw(e);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left || e.touches[0].clientX - rect.left;
+        const y = e.clientY - rect.top || e.touches[0].clientY - rect.top;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        ctx.beginPath();
+    }
+
+    clearSignBtn.addEventListener('click', function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    // Date selection functionality
+    const dateInputs = document.querySelectorAll('.date-input');
+    dateInputs.forEach(input => {
+        input.addEventListener('click', function() {
+            const existingGrid = document.querySelector('.date-grid');
+            if (existingGrid) {
+                existingGrid.remove();
+            }
+            const grid = createDateGrid(input);
+            input.parentNode.appendChild(grid);
+        });
+    });
+
+    function createDateGrid(input) {
+        const grid = document.createElement('div');
+        grid.className = 'date-grid';
+        for (let i = 1; i <= 31; i++) {
+            const span = document.createElement('span');
+            span.textContent = i;
+            span.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                updateDateInput(input);
+            });
+            grid.appendChild(span);
+        }
+        return grid;
+    }
+
+    function updateDateInput(input) {
+        const selectedDates = Array.from(input.parentNode.querySelectorAll('.date-grid .selected'))
+            .map(span => span.textContent)
+            .sort((a, b) => a - b);
+        input.value = selectedDates.join(', ');
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('date-input') && !e.target.closest('.date-grid')) {
+            const existingGrid = document.querySelector('.date-grid');
+            if (existingGrid) {
+                existingGrid.remove();
+            }
+        }
+    });
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (Object.keys(baseInfo).length === 0) {
+            baseInfo = {
+                managerName: document.getElementById('managerName').value,
+                nationalCode: document.getElementById('nationalCode').value,
+                signature: canvas.toDataURL(),
+                baseName: document.getElementById('baseName').value,
+                baseType: document.getElementById('baseType').value,
+                date: document.getElementById('date').value
+            };
+            // Disable base info fields
+            Object.keys(baseInfo).forEach(key => {
+                if (key !== 'signature') {
+                    document.getElementById(key).disabled = true;
+                }
+            });
+        }
+        
+        const employee = {
+            name: document.getElementById('employeeName').value,
+            productive: document.getElementById('productive').value,
+            shifts: {
+                normal24: { count: document.getElementById('normal24Count').value, date: document.getElementById('normal24Date').value },
+                holiday24: { count: document.getElementById('holiday24Count').value, date: document.getElementById('holiday24Date').value },
+                normalLong: { count: document.getElementById('normalLongCount').value, date: document.getElementById('normalLongDate').value },
+                holidayLong: { count: document.getElementById('holidayLongCount').value, date: document.getElementById('holidayLongDate').value },
+                night: { count: document.getElementById('nightCount').value, date: document.getElementById('nightDate').value },
+                fullLeave: { count: document.getElementById('fullLeaveCount').value, date: document.getElementById('fullLeaveDate').value },
+                sickLeave: { count: document.getElementById('sickLeaveCount').value, date: document.getElementById('sickLeaveDate').value },
+                extraHours: { count: document.getElementById('extraHoursCount').value, date: document.getElementById('extraHoursDate').value },
+                hourlyLeave: { count: document.getElementById('hourlyLeaveCount').value, date: document.getElementById('hourlyLeaveDate').value }
+            },
+            missionCount: document.getElementById('missionCount').value,
+            mealCount: document.getElementById('mealCount').value,
+            notes: document.getElementById('notes').value
+        };
+        employees.push(employee);
+        updateTables();
+        form.reset();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    function updateTables() {
+        resultsDiv.style.display = 'block';
+        updateTable1();
+        updateTable2();
+        updateTable3();
+    }
+
+    function updateTable1() {
+        const tbody = document.querySelector('#table1 tbody');
+        tbody.innerHTML = '';
+        const row = tbody.insertRow();
+        row.insertCell(0).textContent = baseInfo.managerName;
+        row.insertCell(1).textContent = baseInfo.baseName;
+        row.insertCell(2).textContent = baseInfo.baseType;
+        row.insertCell(3).textContent = baseInfo.nationalCode;
+        row.insertCell(4).textContent = baseInfo.date;
+        const signatureCell = row.insertCell(5);
+        const img = document.createElement('img');
+        img.src = baseInfo.signature;
+        img.alt = 'امضای مسئول پایگاه';
+        img.className = 'signature';
+        signatureCell.appendChild(img);
+        const actionsCell = row.insertCell(6);
+        actionsCell.innerHTML = `
+            <button class="edit-btn" onclick="editBaseInfo()">ویرایش</button>
+            <button class="delete-btn" onclick="deleteBaseInfo()">حذف</button>
+        `;
+    }
+
+    function updateTable2() {
+        const tbody = document.querySelector('#table2 tbody');
+        tbody.innerHTML = '';
+        employees.forEach((emp, index) => {
+            const row = tbody.insertRow();
+            row.insertCell(0).textContent = emp.name;
+            row.insertCell(1).textContent = emp.productive;
+            row.insertCell(2).textContent = baseInfo.baseType;
+            row.insertCell(3).textContent = baseInfo.baseName;
+            row.insertCell(4).textContent = baseInfo.date;
+            row.insertCell(5).textContent = emp.shifts.normal24.count;
+            row.insertCell(6).textContent = emp.shifts.holiday24.count;
+            row.insertCell(7).textContent = emp.shifts.normalLong.count;
+            row.insertCell(8).textContent = emp.shifts.holidayLong.count;
+            row.insertCell(9).textContent = emp.shifts.night.count;
+            row.insertCell(10).textContent = emp.shifts.fullLeave.count;
+            row.insertCell(11).textContent = emp.shifts.sickLeave.count;
+            row.insertCell(12).textContent = emp.shifts.extraHours.count;
+            row.insertCell(13).textContent = emp.shifts.hourlyLeave.count;
+            row.insertCell(14).textContent = emp.missionCount;
+            row.insertCell(15).textContent = emp.mealCount;
+            row.insertCell(16).textContent = emp.notes;
+            const actionsCell = row.insertCell(17);
+            actionsCell.innerHTML = `
+                <button class="edit-btn" onclick="editEmployee(${index})">ویرایش</button>
+                <button class="delete-btn" onclick="deleteEmployee(${index})">حذف</button>
+            `;
+        });
+    }
+
+    function updateTable3() {
+        const tbody = document.querySelector('#table3 tbody');
+        tbody.innerHTML = '';
+        employees.forEach((emp, index) => {
+            const row = tbody.insertRow();
+            row.insertCell(0).textContent = emp.name;
+            row.insertCell(1).textContent = baseInfo.baseName;
+            row.insertCell(2).textContent = emp.productive;
+            row.insertCell(3).textContent = emp.shifts.normal24.date;
+            row.insertCell(4).textContent = emp.shifts.holiday24.date;
+            row.insertCell(5).textContent = emp.shifts.normalLong.date;
+            row.insertCell(6).textContent = emp.shifts.holidayLong.date;
+            row.insertCell(7).textContent = emp.shifts.night.date;
+            row.insertCell(8).textContent = emp.shifts.fullLeave.date;
+            row.insertCell(9).textContent = emp.shifts.sickLeave.date;
+            row.insertCell(10).textContent = emp.shifts.extraHours.date;
+            row.insertCell(11).textContent = emp.shifts.hourlyLeave.date;
+            const actionsCell = row.insertCell(12);
+            actionsCell.innerHTML = `
+                <button class="edit-btn" onclick="editEmployee(${index})">ویرایش</button>
+                <button class="delete-btn" onclick="deleteEmployee(${index})">حذف</button>
+            `;
+        });
+    }
+
+    function editBaseInfo() {
+        Object.keys(baseInfo).forEach(key => {
+            if (key !== 'signature') {
+                document.getElementById(key).disabled = false;
+            }
+        });
+        submitBtn.style.display = 'none';
+        updateBtn.style.display = 'inline-block';
+        updateBtn.onclick = function() {
+            baseInfo = {
+                managerName: document.getElementById('managerName').value,
+                nationalCode: document.getElementById('nationalCode').value,
+                signature: canvas.toDataURL(),
+                baseName: document.getElementById('baseName').value,
+                baseType: document.getElementById('baseType').value,
+                date: document.getElementById('date').value
+            };
+            Object.keys(baseInfo).forEach(key => {
+                if (key !== 'signature') {
+                    document.getElementById(key).disabled = true;
+                }
+            });
+            updateTables();
+            submitBtn.style.display = 'inline-block';
+            updateBtn.style.display = 'none';
+        };
+    }
+
+    function deleteBaseInfo() {
+        if (confirm('آیا مطمئن هستید که می‌خواهید اطلاعات پایگاه را حذف کنید؟')) {
+            baseInfo = {};
+            employees = [];
+            updateTables();
+            Object.keys(baseInfo).forEach(key => {
+                if (key !== 'signature') {
+                    document.getElementById(key).disabled = false;
+                }
+            });
+            form.reset();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    function editEmployee(index) {
+        const emp = employees[index];
+        document.getElementById('employeeName').value = emp.name;
+        document.getElementById('productive').value = emp.productive;
+        Object.keys(emp.shifts).forEach(key => {
+            document.getElementById(`${key}Count`).value = emp.shifts[key].count;
+            document.getElementById(`${key}Date`).value = emp.shifts[key].date;
+        });
+        document.getElementById('missionCount').value = emp.missionCount;
+        document.getElementById('mealCount').value = emp.mealCount;
+        document.getElementById('notes').value = emp.notes;
+        submitBtn.style.display = 'none';
+        updateBtn.style.display = 'inline-block';
+        updateBtn.onclick = function() {
+            employees[index] = {
+                name: document.getElementById('employeeName').value,
+                productive: document.getElementById('productive').value,
+                shifts: {
+                    normal24: { count: document.getElementById('normal24Count').value, date: document.getElementById('normal24Date').value },
+                    holiday24: { count: document.getElementById('holiday24Count').value, date: document.getElementById('holiday24Date').value },
+                    normalLong: { count: document.getElementById('normalLongCount').value, date: document.getElementById('normalLongDate').value },
+                    holidayLong: { count: document.getElementById('holidayLongCount').value, date: document.getElementById('holidayLongDate').value },
+                    night: { count: document.getElementById('nightCount').value, date: document.getElementById('nightDate').value },
+                    fullLeave: { count: document.getElementById('fullLeaveCount').value, date: document.getElementById('fullLeaveDate').value },
+                    sickLeave: { count: document.getElementById('sickLeaveCount').value, date: document.getElementById('sickLeaveDate').value },
+                    extraHours: { count: document.getElementById('extraHoursCount').value, date: document.getElementById('extraHoursDate').value },
+                    hourlyLeave: { count: document.getElementById('hourlyLeaveCount').value, date: document.getElementById('hourlyLeaveDate').value }
+                },
+                missionCount: document.getElementById('missionCount').value,
+                mealCount: document.getElementById('mealCount').value,
+                notes: document.getElementById('notes').value
+            };
+            updateTables();
+            form.reset();
+            submitBtn.style.display = 'inline-block';
+            updateBtn.style.display = 'none';
+        };
+    }
+
+    function deleteEmployee(index) {
+        if (confirm('آیا مطمئن هستید که می‌خواهید این کارمند را حذف کنید؟')) {
+            employees.splice(index, 1);
+            updateTables();
+        }
+    }
+    
+    // Download image functionality
+
+document.getElementById('downloadImage').addEventListener('click', function() {
+    const fileName = `${baseInfo.baseName}_${baseInfo.date}_${baseInfo.managerName}.png`;
+    
+    // Create a temporary div to hold the content
+    const tempDiv = document.createElement('div');
+    tempDiv.appendChild(document.querySelector('.results').cloneNode(true));
+    document.body.appendChild(tempDiv);
+    
+    // Set styles to ensure full capture
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    tempDiv.style.top = '0';
+    tempDiv.style.width = 'auto';
+    tempDiv.style.height = 'auto';
+    tempDiv.style.transform = 'scale(1)';
+    
+    html2canvas(tempDiv, {
+        allowTaint: true,
+        useCORS: true,
+        width: tempDiv.offsetWidth,
+        height: tempDiv.offsetHeight,
+        scale: 1
+    }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = canvas.toDataURL();
+        link.click();
+        
+        // Remove the temporary div
+        document.body.removeChild(tempDiv);
+    });
+});
+
+
+
+// Download Excel functionality
+
+document.getElementById('downloadExcel').addEventListener('click', function() {
+
+    const fileName = `${baseInfo.baseName}_${baseInfo.date}_${baseInfo.managerName}.xlsx`;
+
+    const workbook = XLSX.utils.book_new();
+
+
+
+    // Table 1
+
+    const table1Data = [
+
+        ['نام مسئول پایگاه', 'نام پایگاه', 'نوع پایگاه', 'کد ملی', 'ماه و سال'],
+
+        [baseInfo.managerName, baseInfo.baseName, baseInfo.baseType, baseInfo.nationalCode, baseInfo.date]
+
+    ];
+
+    const sheet1 = XLSX.utils.aoa_to_sheet(table1Data);
+
+    XLSX.utils.book_append_sheet(workbook, sheet1, "اطلاعات پایگاه");
+
+
+
+    // Table 2
+
+    const table2Data = [
+
+        ['نام پرسنل', 'بهره ور', 'نوع پایگاه', 'نام پایگاه', 'ماه و سال', '۲۴ عادی', '۲۴ تعطیل', 'لانگ عادی', 'لانگ تعطیل', 'شب', 'مرخصی کامل', 'مرخصی استعلاجی', 'ساعات متفرقه', 'مرخصی ساعتی', 'تعداد ماموریت', 'تعداد وعده غذا', 'ملاحظات'],
+
+        ...employees.map(emp => [
+
+            emp.name, emp.productive, baseInfo.baseType, baseInfo.baseName, baseInfo.date,
+
+            emp.shifts.normal24.count, emp.shifts.holiday24.count, emp.shifts.normalLong.count,
+
+            emp.shifts.holidayLong.count, emp.shifts.night.count, emp.shifts.fullLeave.count,
+
+            emp.shifts.sickLeave.count, emp.shifts.extraHours.count, emp.shifts.hourlyLeave.count,
+
+            emp.missionCount, emp.mealCount, emp.notes
+
+        ])
+
+    ];
+
+    const sheet2 = XLSX.utils.aoa_to_sheet(table2Data);
+
+    XLSX.utils.book_append_sheet(workbook, sheet2, "اطلاعات کارکنان و شیفت‌ها");
+
+
+
+    // Table 3
+
+    const table3Data = [
+
+        ['نام پرسنل', 'نام پایگاه', 'بهره ور', 'تاریخ ۲۴ عادی', 'تاریخ ۲۴ تعطیل', 'تاریخ لانگ عادی', 'تاریخ لانگ تعطیل', 'تاریخ شب', 'تاریخ مرخصی کامل', 'تاریخ مرخصی استعلاجی', 'تاریخ ساعات متفرقه', 'تاریخ مرخصی ساعتی'],
+
+        ...employees.map(emp => [
+
+            emp.name, baseInfo.baseName, emp.productive,
+
+            emp.shifts.normal24.date, emp.shifts.holiday24.date, emp.shifts.normalLong.date,
+
+            emp.shifts.holidayLong.date, emp.shifts.night.date, emp.shifts.fullLeave.date,
+
+            emp.shifts.sickLeave.date, emp.shifts.extraHours.date, emp.shifts.hourlyLeave.date
+
+        ])
+
+    ];
+
+    const sheet3 = XLSX.utils.aoa_to_sheet(table3Data);
+
+    XLSX.utils.book_append_sheet(workbook, sheet3, "تاریخ‌های شیفت‌ها");
+
+
+
+    XLSX.writeFile(workbook, fileName);
+
+});
+
+// Searchable dropdown for employee name
+
+const employeeNameInput = document.getElementById('employeeName');
+
+const employeeList = document.getElementById('employeeList');
+
+const originalOptions = Array.from(employeeList.options).map(opt => opt.value);
+
+
+
+employeeNameInput.addEventListener('input', function() {
+
+    const filter = this.value.toLowerCase();
+
+    const filteredOptions = originalOptions.filter(opt => 
+
+        opt.toLowerCase().includes(filter)
+
+    );
+
+
+
+    // Clear existing options
+
+    employeeList.innerHTML = '';
+
+
+
+    // Add filtered options
+
+    filteredOptions.forEach(opt => {
+
+        const option = document.createElement('option');
+
+        option.value = opt;
+
+        employeeList.appendChild(option);
+
+    });
+
+});
+
+// Share functionality
+
+document.getElementById('shareButton').addEventListener('click', async function() {
+    if (navigator.share) {
+        try {
+            // Create a temporary div to hold the content
+            const tempDiv = document.createElement('div');
+            tempDiv.appendChild(document.querySelector('.results').cloneNode(true));
+            document.body.appendChild(tempDiv);
+            
+            // Set styles to ensure full capture
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '0';
+            tempDiv.style.width = 'auto';
+            tempDiv.style.height = 'auto';
+            tempDiv.style.transform = 'scale(1)';
+            
+            // Generate image of tables
+            const canvas = await html2canvas(tempDiv, {
+                allowTaint: true,
+                useCORS: true,
+                width: tempDiv.offsetWidth,
+                height: tempDiv.offsetHeight,
+                scale: 1
+            });
+            
+            // Remove the temporary div
+            document.body.removeChild(tempDiv);
+
+            const imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            const imageFile = new File([imageBlob], `${baseInfo.baseName}_${baseInfo.date}_${baseInfo.managerName}.png`, { type: 'image/png' });
+
+            // Generate CSV of all tables
+            const allTablesCSV = generateCSV(true);
+            const allTablesCsvBlob = new Blob(['\ufeff' + allTablesCSV], { type: 'text/csv;charset=utf-8;' });
+            const allTablesCsvFile = new File([allTablesCsvBlob], `${baseInfo.baseName}_${baseInfo.date}_${baseInfo.managerName}_all_tables.csv`, { type: 'text/csv' });
+
+            // Generate CSV of just table 2
+            const table2CSV = generateCSV(false);
+            const table2CsvBlob = new Blob(['\ufeff' + table2CSV], { type: 'text/csv;charset=utf-8;' });
+            const table2CsvFile = new File([table2CsvBlob], `${baseInfo.baseName}_${baseInfo.date}_${baseInfo.managerName}_table2.csv`, { type: 'text/csv' });
+
+            // Share files
+            await navigator.share({
+                files: [imageFile, allTablesCsvFile, table2CsvFile],
+                title: 'جداول میزان کارکرد کارکنان اورژانس',
+                text: `جداول میزان کارکرد کارکنان اورژانس برای پایگاه ${baseInfo.baseName} در تاریخ ${baseInfo.date}`
+            });
+            console.log('Files shared successfully');
+        } catch (error) {
+            console.error('Error sharing files:', error);
+        }
+    } else {
+        alert('متأسفانه، مرورگر شما از قابلیت اشتراک‌گذاری پشتیبانی نمی‌کند.');
+    }
+});
+
+
+
+function generateCSV(allTables) {
+
+    let csv = '\uFEFF'; // BOM for UTF-8
+
+
+
+    if (allTables) {
+
+        // Table 1
+
+        csv += 'جدول ۱: اطلاعات پایگاه\n';
+
+        csv += 'نام مسئول پایگاه,نام پایگاه,نوع پایگاه,کد ملی,ماه و سال\n';
+
+        csv += `${baseInfo.managerName},${baseInfo.baseName},${baseInfo.baseType},${baseInfo.nationalCode},${baseInfo.date}\n\n`;
+
+    }
+
+
+
+    // Table 2
+
+    csv += 'جدول ۲: اطلاعات کارکنان و شیفت‌ها\n';
+
+    csv += 'نام پرسنل,بهره ور,نوع پایگاه,نام پایگاه,ماه و سال,۲۴ عادی,۲۴ تعطیل,لانگ عادی,لانگ تعطیل,شب,مرخصی کامل,مرخصی استعلاجی,ساعات متفرقه,مرخصی ساعتی,تعداد ماموریت,تعداد وعده غذا,ملاحظات\n';
+
+    employees.forEach(emp => {
+
+        csv += `${emp.name},${emp.productive},${baseInfo.baseType},${baseInfo.baseName},${baseInfo.date},${emp.shifts.normal24.count},${emp.shifts.holiday24.count},${emp.shifts.normalLong.count},${emp.shifts.holidayLong.count},${emp.shifts.night.count},${emp.shifts.fullLeave.count},${emp.shifts.sickLeave.count},${emp.shifts.extraHours.count},${emp.shifts.hourlyLeave.count},${emp.missionCount},${emp.mealCount},${emp.notes}\n`;
+
+    });
+
+
+
+    if (allTables) {
+
+        csv += '\n';
+
+        // Table 3
+
+        csv += 'جدول ۳: تاریخ‌های شیفت‌ها\n';
+
+        csv += 'نام پرسنل,نام پایگاه,بهره ور,تاریخ ۲۴ عادی,تاریخ ۲۴ تعطیل,تاریخ لانگ عادی,تاریخ لانگ تعطیل,تاریخ شب,تاریخ مرخصی کامل,تاریخ مرخصی استعلاجی,تاریخ ساعات متفرقه,تاریخ مرخصی ساعتی\n';
+
+        employees.forEach(emp => {
+
+            csv += `${emp.name},${baseInfo.baseName},${emp.productive},${emp.shifts.normal24.date},${emp.shifts.holiday24.date},${emp.shifts.normalLong.date},${emp.shifts.holidayLong.date},${emp.shifts.night.date},${emp.shifts.fullLeave.date},${emp.shifts.sickLeave.date},${emp.shifts.extraHours.date},${emp.shifts.hourlyLeave.date}\n`;
+
+        });
+
+    }
+
+
+
+    return csv;
+
+}
+
+
+    
+    </script>
+</body></html>
